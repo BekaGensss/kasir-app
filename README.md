@@ -1,66 +1,67 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚀 Kasir App: Modern POS System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Kasir App** adalah sebuah aplikasi Point of Sale (POS) berbasis web yang dirancang untuk memberikan pengalaman kasir yang modern, efisien, dan mulus. Dibangun dengan fondasi **Laravel 10** yang solid dan antarmuka **Tailwind CSS** yang elegan, aplikasi ini siap membantu bisnis dalam mengelola penjualan dan inventaris dengan akurat.
 
-## About Laravel
+Tujuan utama dari proyek ini adalah untuk menunjukkan bagaimana teknologi modern dapat disatukan untuk menciptakan solusi bisnis yang kuat dan mudah digunakan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Unggulan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   **Antarmuka Kasir Interaktif:** Pengalaman kasir yang *real-time* dan responsif untuk pencarian produk, manajemen keranjang, dan penyelesaian transaksi.
+-   **Alur Pembayaran Lengkap:** Mendukung pembayaran tunai dengan perhitungan kembalian otomatis, serta pembayaran non-tunai melalui simulasi bank dan QRIS.
+-   **Laporan Penjualan Visual:** Dashboard yang informatif menampilkan total pendapatan, jumlah transaksi, dan produk terlaris dengan data yang difilter berdasarkan tanggal dan disajikan dalam bentuk grafik.
+-   **Manajemen Produk Komprehensif:** Kontrol penuh atas data produk dengan fitur **CRUD** (Create, Read, Update, Delete) yang efisien.
+-   **Manajemen Pengguna Fleksibel:** Sistem autentikasi pengguna dengan peran (`admin` dan `kasir`) untuk membedakan hak akses dan menjaga keamanan data.
+-   **Tampilan Responsif:** Desain yang disesuaikan untuk desktop dan mobile, dengan *navbar* yang elegan dan menu *hamburger* yang intuitif.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ⚙️ Teknologi yang Digunakan
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-   **Backend:** PHP 8.1+, Laravel 10, MySQL
+-   **Frontend:** Tailwind CSS, JavaScript (Vanilla JS), Vite
+-   **Library:** Maatwebsite/Excel (untuk ekspor laporan), Chart.js (untuk visualisasi data), Toastify.js (untuk notifikasi).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Cara Menjalankan Proyek Secara Lokal
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Ikuti langkah-langkah di bawah ini untuk memulai proyek di lingkungan lokal Anda.
 
-### Premium Partners
+### 1. Klon Repositori
+```bash
+git clone [https://github.com/BekaGensss/kasir-app-laravel.git](https://github.com/BekaGensss/kasir-app-laravel.git)
+cd kasir-app-laravel
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. Instalasi Dependensi
+Bash
+composer install
+npm install
 
-## Contributing
+3. Konfigurasi Database
+Buat file .env dari .env.example dan atur kredensial database MySQL Anda.
+Bash
+cp .env.example .env
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. Migrasi Database
+Jalankan migrasi untuk membuat tabel yang diperlukan.
+Bash
+php artisan migrate
 
-## Code of Conduct
+5. Jalankan Server
+Buka dua terminal terpisah dan jalankan perintah berikut:
+Bash
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Terminal 1: Untuk server backend
+php artisan serve
+Bash
 
-## Security Vulnerabilities
+# Terminal 2: Untuk server frontend
+npm run dev
+Aplikasi kini dapat diakses di http://127.0.0.1:8000.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+🤝 Kontributor
+BekaGensss
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+(Bara Kusuma.)
