@@ -16,7 +16,8 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return view('sales.index');
+        $products = Product::all(); // Tambahkan ini
+        return view('sales.index', compact('products')); // Kirimkan variabel 'products' ke view
     }
 
     /**
@@ -45,7 +46,8 @@ class SaleController extends Controller
             'items' => 'required|array',
             'items.*.id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'cash_paid' => 'required|numeric|min:0', // Kembali ke hanya validasi cash_paid
+            'payment_method' => 'required|string',
+            'cash_paid' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -61,14 +63,14 @@ class SaleController extends Controller
                     $total_price += $product->price * $item['quantity'];
                 }
 
-                if ($request->cash_paid < $total_price) {
+                if ($request->payment_method === 'cash' && $request->cash_paid < $total_price) {
                     throw new \Exception("Jumlah pembayaran kurang dari total harga.");
                 }
 
                 $sale = Sale::create([
                     'total_price' => $total_price,
                     'cash_paid' => $request->cash_paid,
-                    // Baris 'payment_method' sudah dihapus di sini
+                    'payment_method' => $request->payment_method,
                 ]);
 
                 foreach ($items as $item) {
@@ -123,16 +125,16 @@ class SaleController extends Controller
         $total_sales = $query->sum('total_price');
         $total_transactions = $query->count();
         $top_products = SaleItem::select('product_id', DB::raw('SUM(quantity) as total_quantity'))
-                                ->whereHas('sale', function ($q) use ($start_date, $end_date) {
-                                    if ($start_date && $end_date) {
-                                        $q->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59']);
-                                    }
-                                })
-                                ->groupBy('product_id')
-                                ->orderBy('total_quantity', 'desc')
-                                ->with('product')
-                                ->limit(5)
-                                ->get();
+                                 ->whereHas('sale', function ($q) use ($start_date, $end_date) {
+                                     if ($start_date && $end_date) {
+                                         $q->whereBetween('created_at', [$start_date, $end_date . ' 23:59:59']);
+                                     }
+                                 })
+                                 ->groupBy('product_id')
+                                 ->orderBy('total_quantity', 'desc')
+                                 ->with('product')
+                                 ->limit(5)
+                                 ->get();
 
         $daily_sales_query = Sale::select(
             DB::raw('DATE(created_at) as date'),
@@ -162,5 +164,31 @@ class SaleController extends Controller
     {
         $sale->load('items.product');
         return view('sales.receipt', compact('sale'));
+    }
+
+    /**
+     * Menghapus transaksi dari riwayat (satu per satu atau semua).
+     * @param  string|int  $sale
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($sale)
+    {
+        try {
+            if ($sale === 'all') {
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+                SaleItem::truncate();
+                Sale::truncate();
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            } else {
+                DB::transaction(function () use ($sale) {
+                    $saleRecord = Sale::findOrFail($sale);
+                    $saleRecord->items()->delete();
+                    $saleRecord->delete();
+                });
+            }
+            return redirect()->route('sales.history')->with('success', 'Transaksi berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('sales.history')->with('error', 'Gagal menghapus transaksi: ' . $e->getMessage());
+        }
     }
 }

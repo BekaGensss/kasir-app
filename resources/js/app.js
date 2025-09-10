@@ -1,20 +1,73 @@
 import './bootstrap';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // === Logic Halaman Sidebar ===
+    const toggleSidebarBtn = document.getElementById('toggle-sidebar-button');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    
+    function updateLayout() {
+        if (window.innerWidth >= 1024) { // Desktop
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            mainContent.classList.remove('lg:ml-0');
+            mainContent.classList.add('lg:ml-64');
+            backdrop.classList.add('hidden');
+        } else { // Mobile
+            if (sidebar.classList.contains('translate-x-0')) {
+                backdrop.classList.remove('hidden');
+            } else {
+                backdrop.classList.add('hidden');
+            }
+            mainContent.classList.remove('lg:ml-64');
+            mainContent.classList.add('lg:ml-0');
+        }
+    }
+
+    toggleSidebarBtn.addEventListener('click', () => {
+        const isSidebarClosed = sidebar.classList.contains('-translate-x-full');
+        if (isSidebarClosed) {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+        } else {
+            sidebar.classList.remove('translate-x-0');
+            sidebar.classList.add('-translate-x-full');
+        }
+        updateLayout();
+    });
+
+    backdrop.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        sidebar.classList.remove('translate-x-0');
+        updateLayout();
+    });
+
+    window.addEventListener('resize', updateLayout);
+    document.addEventListener('DOMContentLoaded', updateLayout);
+
+    // === Logic Halaman Kasir dan Animasi ===
     const searchInput = document.getElementById('searchInput');
     const productsTableBody = document.querySelector('#productsTable tbody');
     const cartTableBody = document.querySelector('#cartTable tbody');
 
-    // Menambahkan kelas untuk fade-in card
-    const mainContentCards = document.querySelectorAll('.bg-white.rounded-2xl.shadow-xl');
-    mainContentCards.forEach(card => {
-        card.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-    });
-
-    // Cek jika berada di halaman kasir
+    // Cek jika halaman adalah halaman kasir
     if (searchInput && productsTableBody && cartTableBody) {
+        // Tampilkan elemen utama dengan fade-in
+        const mainContentCards = document.querySelectorAll('.bg-white.rounded-2xl.shadow-xl');
+        mainContentCards.forEach(card => {
+            card.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+        });
+        setTimeout(() => {
+            mainContentCards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            });
+        }, 100);
+        
+        // ... (Kode kasir lainnya di sini)
         const totalPriceElement = document.getElementById('totalPrice');
         const cashPaidInput = document.getElementById('cashPaid');
         const changeElement = document.getElementById('change');
@@ -22,22 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const paymentMethodBtns = document.querySelectorAll('.payment-method-btn');
         const paymentFields = document.getElementById('payment-fields');
 
-        // Elemen Modal QRIS
         const qrisModal = document.getElementById('qris-modal');
         const qrisConfirmBtn = document.getElementById('qris-confirm-btn');
         const qrisTotalPriceElement = document.getElementById('qris-total-price');
+        
+        const bankModal = document.getElementById('bank-modal');
+        const bankModalTitle = document.getElementById('bank-modal-title');
+        const bankTotalPriceElement = document.getElementById('bank-total-price');
+        const bankAccountNumber = document.getElementById('bank-account-number');
+        const bankConfirmBtn = document.getElementById('bank-confirm-btn');
 
         let cart = [];
         let totalPrice = 0;
         let selectedPaymentMethod = '';
-
-        // Tampilkan elemen utama dengan fade-in setelah DOM siap
-        setTimeout(() => {
-            mainContentCards.forEach(card => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            });
-        }, 100);
+        
+        const bankDetails = {
+            bca: { title: "Pembayaran BCA", number: "123-456-7890" },
+            dana: { title: "Pembayaran DANA", number: "0812-3456-7890" },
+            bri: { title: "Pembayaran BRI", number: "9876-5432-10" }
+        };
 
         const fetchProducts = async (query) => {
             if (query.length < 2) {
@@ -143,13 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paymentMethodBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // Hapus kelas aktif dari semua tombol
                 paymentMethodBtns.forEach(b => {
                     b.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
                     b.classList.add('bg-gray-100', 'text-gray-800');
                 });
                 
-                // Tambahkan kelas aktif ke tombol yang diklik
                 btn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
                 btn.classList.remove('bg-gray-100', 'text-gray-800');
                 
@@ -225,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Fungsi untuk memberikan feedback visual pada tombol Tambah
         function showFeedback(btn, success) {
             if (success) {
                 btn.innerHTML = `<i class="fas fa-check text-green-500 animate-pulse"></i>`;
@@ -268,43 +321,53 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutButton.addEventListener('click', async () => {
             if (cart.length === 0) return;
 
-            if (selectedPaymentMethod === 'qris') {
+            const method = selectedPaymentMethod;
+            if (method === 'qris') {
                 qrisTotalPriceElement.textContent = `Rp. ${totalPrice.toLocaleString('id-ID')}`;
                 
-                // Tambahkan animasi untuk modal
                 qrisModal.classList.remove('hidden');
                 setTimeout(() => {
                     qrisModal.classList.add('opacity-100');
                     qrisModal.querySelector('.rounded-2xl').classList.add('scale-100');
                 }, 10);
-                
-                return;
-            }
+            } else if (bankDetails[method]) {
+                bankModalTitle.textContent = bankDetails[method].title;
+                bankTotalPriceElement.textContent = `Rp. ${totalPrice.toLocaleString('id-ID')}`;
+                bankAccountNumber.textContent = bankDetails[method].number;
 
-            // Jika metode pembayaran lain, langsung proses checkout
-            await processCheckout();
+                bankModal.classList.remove('hidden');
+                setTimeout(() => {
+                    bankModal.classList.add('opacity-100');
+                    bankModal.querySelector('.rounded-2xl').classList.add('scale-100');
+                }, 10);
+            } else {
+                await processCheckout();
+            }
         });
 
         qrisConfirmBtn.addEventListener('click', async () => {
-            // Hilangkan animasi modal
-            qrisModal.classList.remove('opacity-100');
-            qrisModal.querySelector('.rounded-2xl').classList.remove('scale-100');
-            setTimeout(() => {
-                qrisModal.classList.add('hidden');
-            }, 300);
-            
+            closeModal(qrisModal);
             await processCheckout();
         });
 
-        // Menutup modal QRIS saat klik di luar
+        bankConfirmBtn.addEventListener('click', async () => {
+            closeModal(bankModal);
+            await processCheckout();
+        });
+
+        function closeModal(modal) {
+            modal.classList.remove('opacity-100');
+            modal.querySelector('.rounded-2xl').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
         qrisModal.addEventListener('click', (e) => {
-            if (e.target === qrisModal) {
-                qrisModal.classList.remove('opacity-100');
-                qrisModal.querySelector('.rounded-2xl').classList.remove('scale-100');
-                setTimeout(() => {
-                    qrisModal.classList.add('hidden');
-                }, 300);
-            }
+            if (e.target === qrisModal) closeModal(qrisModal);
+        });
+        bankModal.addEventListener('click', (e) => {
+            if (e.target === bankModal) closeModal(bankModal);
         });
 
         async function processCheckout() {

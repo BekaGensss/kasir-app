@@ -44,6 +44,14 @@
             <p class="text-xs text-gray-500">{{ $sale->created_at->format('d M Y, H:i') }}</p>
         </div>
         <hr class="my-6 border-dashed border-gray-300">
+        
+        <div class="text-center text-xs text-gray-600 mb-6">
+            <p class="font-bold">Kasir App Store</p>
+            <p>Jalan Mawar No. 123, Kota ABC</p>
+            <p>Telp: 0812-3456-7890</p>
+        </div>
+        
+        <hr class="my-6 border-dashed border-gray-300">
 
         <div class="space-y-4">
             @foreach($sale->items as $item)
@@ -82,10 +90,12 @@
         </div>
         
         <div class="text-center mt-8">
-            <p class="text-sm text-gray-500">
+            <p class="text-sm font-semibold text-gray-700 mb-2">Sampai jumpa lagi!</p>
+            <p class="text-sm text-gray-500 mb-4">
                 <i class="fas fa-heart text-red-500 mr-1"></i>
                 Terima kasih telah berbelanja!
             </p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(route('sales.receipt', ['sale' => $sale->id])) }}" alt="QR Code" class="mx-auto my-4 border border-gray-200">
             <p class="text-xs text-gray-400 mt-2">Struk #{{ $sale->id }}</p>
         </div>
     </div>

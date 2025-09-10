@@ -10,6 +10,17 @@
             <i class="fas fa-history text-purple-600 mr-3"></i>
             Riwayat Transaksi
         </h1>
+        
+        @if(!$sales->isEmpty())
+        <form action="{{ route('sales.destroy', 'all') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA riwayat transaksi? Aksi ini tidak dapat dibatalkan.');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-xl font-bold shadow-md hover:bg-red-700 transition-all duration-300 transform hover:scale-105 inline-flex items-center">
+                <i class="fas fa-trash-alt mr-2"></i>
+                Hapus Semua
+            </button>
+        </form>
+        @endif
     </div>
 
     @if($sales->isEmpty())
@@ -36,6 +47,9 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <i class="fas fa-info-circle text-red-500 mr-2"></i>Detail
                             </th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <i class="fas fa-cogs text-gray-500"></i>Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -53,6 +67,15 @@
                                             </li>
                                         @endforeach
                                     </ul>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition-all duration-300 transform hover:scale-110">
+                                            <i class="fas fa-trash-alt text-lg"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

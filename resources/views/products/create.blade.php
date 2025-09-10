@@ -56,6 +56,21 @@
                         <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                     @enderror
                 </div>
+                
+                <div class="col-span-full">
+                    <label for="category_id" class="block text-sm font-semibold text-gray-700 uppercase mb-2">Kategori</label>
+                    <select name="category_id" id="category_id" 
+                            class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 @error('category_id') border-red-500 @enderror" required>
+                        <option value="">Pilih Kategori</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+
             </div>
             
             <div class="pt-4 flex justify-end">

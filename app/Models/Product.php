@@ -14,9 +14,14 @@ class Product extends Model
         'sku',
         'price',
         'stock',
+        'category_id',
     ];
 
-    // Tambahkan relasi ke SaleItem
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
